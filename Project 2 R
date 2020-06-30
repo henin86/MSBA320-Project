@@ -1,0 +1,231 @@
+---
+title: "R _ Project 2 _ Ping Yang"
+author: "MSBA320  Ping Yang"
+date: "05/24/2020"
+output:
+  html_document: 
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 9
+    highlight: textmate
+    theme: simplex
+    toc: yes
+    toc_depth: 6
+  word_document:
+    toc: yes
+    toc_depth: '6'
+  pdf_document:
+    highlight: espresso
+---
+
+
+### Plotting with Continuous Explanatory Variables: Scatterplots
+```{r}
+x<- 1:10
+y<-c(11,12,9,7,5,8,4,4,5,3)
+plot(x,y)
+```
+
+
+### Plotting character with different types
+```{r}
+plot(x,y,ylab="Response variable",xlab="Explanatory variable")
+plot(x,y,pch=3,ylab="Response variable",xlab="Explanatory variable")
+plot(x,y,pch=2,ylab="Response variable",xlab="Explanatory variable")
+```
+
+
+### Adding lines to a scatterplot
+### Regression line
+```{r}
+y~x
+
+plot(x,y,ylab="Response variable",xlab="Explanatory variable",pch=2)
+
+abline(lm(y~x))
+lines(c(0,10),c(12,0),lty=2)
+```
+
+
+### Adding more points to a graph
+```{r}
+x<-1:10
+y<-c(11,12,9,7,5,8,4,4,5,3)
+plot(x,y,xlab="Explanatory Variable", ylab="Response Variable",pch=2)
+abline(lm(y~x))
+lines(c(0,10),c(12,0),lty=2)
+
+#Adding more points to a graph
+v<-c(2,4,6,8,10)
+w<-c(8,5,6,6,2)
+points(v,w,pch=3)
+abline(lm(w~v),lty=3)
+```
+
+
+### Plotting with Categorical Explanatory Variables: Box Plots
+
+```{r}
+sex<-c("male","female")
+
+weather<-read.table("D:\\GGU\\MSBA320\\Course Downloadable Data  Exercises-20200423\\SilwoodWeather.txt",header=T)
+names(weather)
+
+attach(weather)
+month<-factor(month)
+is.factor(month)
+
+plot(month,upper)
+```
+
+
+### Colour in R (SPlus is different)
+```{r}
+pie(rep(1, 30), col = rainbow(30), radius = 0.9)
+pie(rep(1, 10), col = rainbow(10), radius = 0.5)
+```
+
+
+### Colour with graphs
+```{r}
+x<-seq(0,10,0.1)
+y1 <- 2 + 3 * x - 0.25 * x ^ 2
+y2 <- 3 + 3.3 * x - 0.3 * x ^ 2
+par(bg="ghostwhite")
+
+plot(x,y2,type="n",ylab="")
+#draw the two lines, y2 in red and y1 in blue
+lines(x,y2,col="red")
+lines(x,y1,col="blue")
+```
+
+
+### Coloured scatterplots
+```{r}
+jantemps<-read.table("D:\\GGU\\MSBA320\\Course Downloadable Data  Exercises-20200423\\jantemp.txt",header=T)
+attach(jantemps)
+names(jantemps)
+max(tmax)
+min(tmin)
+
+plot(day,tmax,ylim=c(-12,12),type="n",ylab="Temperature")
+points(day,tmin,col="blue",pch=16)
+points(day,tmax,col="red",pch=16)
+for (i in 1:31) lines(c(i ,i ), c( tmin[i], tmax[i] ), col="green")
+```
+
+
+### Colour with histograms
+```{r}
+x <- rnorm(1000)
+par(bg = "cornsilk")
+hist(x, col = "lavender", main = "")
+```
+
+
+### Colour with pie charts
+```{r}
+fate <- c(0.12, 0.3, 0.26, 0.16, 0.04, 0.12)
+names(fate)<-c("Ragwort", "Thistle", "Willowherb", "Rush", "Orchid","Knapweed")
+pie(fate, col = c("purple", "violetred1", "green3", "cornsilk", "cyan","white"))
+```
+
+
+### Multivariate Plots
+```{r}
+pollution<-read.table("D:\\GGU\\MSBA320\\week2\\Pollute.txt", header = T)
+
+names(pollution)
+pairs(pollution,panel=panel.smooth)
+```
+
+
+### Tree-based mode
+
+```{r}
+library(tree)
+regtree<-tree(Pollution ~ . , data=pollution)
+plot(regtree)
+text(regtree)
+```
+
+
+### Conditioning plots
+
+```{r}
+attach(pollution)
+coplot(Pollution~Temp | Rain)
+```
+
+
+### Graphical Parameters (par)
+
+#The default single plot screen
+
+par(mfrow=c(1,1))
+
+#Two plots side by side 
+
+par(mfrow=c(1,2))
+
+#Four plots in a 2 x 2 square 
+
+par(mfrow=c(2,2))
+
+
+### Logarithmic axes
+
+
+```{r}
+plotdata<-read.table("D:\\GGU\\MSBA320\\week2\\plotdata.txt", header = T)
+names(plotdata)
+attach(plotdata)
+
+par(mfrow=c(2,2))
+plot(xvalues,yvalues,type="l")
+plot(xvalues,yvalues,log="xy",type="l")
+plot(xvalues,yvalues,log="y", type="l")
+plot(xvalues,yvalues,log="x", type="l")
+```
+
+
+### Scaling the axes
+```{R}
+par(mfrow=c(1,2))
+plot(xvalues,yvalues,type="l")
+plot(xvalues,yvalues,ylim=c(0,50),type="l")
+```
+
+
+### Text in graphs
+text(1.5,45,"(b)")
+
+```{r}
+
+map.places<-read.csv("D:\\GGU\\MSBA320\\week2\\map.places.csv", header = T)
+attach(map.places)
+names(map.places)
+
+map.data<-read.csv("D:\\GGU\\MSBA320\\week2\\bowens.csv", header = T)
+attach(map.data)
+names(map.data)
+
+nn<-ifelse(north<60,north+100,north)
+plot(c(20,100),c(60,110),type = "n",xlab = "",ylab = "")
+for(i in 1:length(wanted)){
+ii<-which(place==as.character(wanted[i]))
+text(east[ii],nn[ii],as.character(place[ii],cex=0.6))}
+```
+
+
+### Character alignment
+```{r}
+labels<-letters[1:10]
+labels
+
+plot(1:10,1:10,type="n")
+text(1:10,1:10,labels,cex=2)
+plot(1:10,1:10,type="n")
+text(1:10,10:1,labels,cex=2,srt=180)
+```
+
