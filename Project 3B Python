@@ -1,0 +1,217 @@
+Project 3B Python
+MSBA320
+Ping Yang
+#Importing libraries
+import numpy as np
+%matplotlib inline
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import statsmodels as sms
+import statsmodels.robust
+import math
+from sklearn import linear_model, datasets
+!pip install ggplot
+Requirement already satisfied: ggplot in c:\users\grace surface\anaconda3\lib\site-packages (0.11.5)
+Requirement already satisfied: cycler in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (0.10.0)
+Requirement already satisfied: six in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (1.14.0)
+Requirement already satisfied: patsy>=0.4 in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (0.5.1)
+Requirement already satisfied: matplotlib in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (3.1.3)
+Requirement already satisfied: scipy in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (1.4.1)
+Requirement already satisfied: numpy in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (1.18.1)
+Requirement already satisfied: pandas in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (1.0.1)
+Requirement already satisfied: brewer2mpl in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (1.4.1)
+Requirement already satisfied: statsmodels in c:\users\grace surface\anaconda3\lib\site-packages (from ggplot) (0.11.0)
+Requirement already satisfied: python-dateutil>=2.1 in c:\users\grace surface\anaconda3\lib\site-packages (from matplotlib->ggplot) (2.8.1)
+Requirement already satisfied: kiwisolver>=1.0.1 in c:\users\grace surface\anaconda3\lib\site-packages (from matplotlib->ggplot) (1.1.0)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in c:\users\grace surface\anaconda3\lib\site-packages (from matplotlib->ggplot) (2.4.6)
+Requirement already satisfied: pytz>=2017.2 in c:\users\grace surface\anaconda3\lib\site-packages (from pandas->ggplot) (2019.3)
+Requirement already satisfied: setuptools in c:\users\grace surface\anaconda3\lib\site-packages (from kiwisolver>=1.0.1->matplotlib->ggplot) (45.2.0.post20200210)
+#Multivariate Plots
+Pollute = pd.read_csv("Pollute.txt", sep = "\t", na_values='.')
+list (Pollute)
+['Pollution', 'Temp', 'Industry', 'Population', 'Wind', 'Rain', 'Wet.days']
+sns.pairplot(Pollute)
+<seaborn.axisgrid.PairGrid at 0x195d96f07c8>
+
+#Tree-based models
+from sklearn.tree import DecisionTreeClassifier
+
+from sklearn.tree import plot_tree
+clf = DecisionTreeClassifier(max_depth=3) #max_depth is maximum number of levels in the tree
+clf.fit(Pollute.loc[:, ['Pollution','Temp',  'Population', 'Wind', 'Rain', 'Wet.days']], Pollute.loc[:,['Industry']])
+
+plt.figure(figsize=(25,10))
+a = plot_tree(clf, 
+              feature_names=['Pollution','Temp', 'Population', 'Wind', 'Rain', 'Wet.days'], 
+              # class_names=[ 'Pollute'], 
+              filled=True, 
+              rounded=True, 
+              fontsize=15)
+
+# Conditioning plots
+import numpy as np
+import pandas
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+raw = pandas.read_table('Pollute.txt', header=0)
+
+data = np.array(raw)[:, [0,1,5]]
+
+# print(data)
+a = sorted(data[:,2])
+
+print(len(a))
+41
+# average the number of data points in each interval
+interval = [a[i] for i in range(len(a)) if i%7==0] + [a[-1]]
+
+print(interval)
+[7.05, 30.18, 35.89, 38.79, 42.59, 48.34, 59.8]
+plt.rcParams.update({'font.size': 14})
+fig = plt.figure(figsize=(12,7))
+
+gs = gridspec.GridSpec(3, 3)
+
+ax = fig.add_subplot(gs[0, :])
+
+t = 0
+for i in range(len(interval)-1):
+    ax.plot([interval[i], interval[i+1]], [t,t], linewidth=7, c='k', alpha=0.5)  #add black margin; alpha=transparency
+    ax.plot([interval[i], interval[i+1]], [t,t], linewidth=5, c='b', alpha=0.5)  #c=blue
+    t+=1
+    ax.text(-0.1, -5, "Pollution", rotation=90, va='center')
+
+# fig, ax = plt.subplots(3, 3)
+for i in range(6):
+    ax = fig.add_subplot(gs[1+i//3, i%3])  # //=Integer; %=Residual
+
+    tmp = data[np.where((data[:,2]>=interval[i]) & (data[:, 2]<interval[i+1]))]
+    
+    ax.scatter(tmp[:,1], tmp[:, 0])  # 1=Temp; 0=Pollution
+
+    ax.set_xlim(40, 75)
+    ax.set_ylim(0, 130)
+    if i==4:
+      plt.title('Temp', y=-0.4)
+        
+
+plt.suptitle('Given: Rain')        
+plt.show()
+
+#Logarithmic axes
+plotdata = pd.read_csv("plotdata.txt", sep = "\t", na_values='.', header=0)
+print(plotdata)
+    x   y
+0   1  11
+1   2  12
+2   3   9
+3   4   7
+4   5   5
+5   6   8
+6   7   4
+7   8   4
+8   9   5
+9  10   3
+xvalues = list(range(1,11))
+yvalues = [11,12,9,7,5,8,4,4,5,3]
+
+print(xvalues)
+print(yvalues)
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+[11, 12, 9, 7, 5, 8, 4, 4, 5, 3]
+fig, axes = plt.subplots(2,2,figsize=(10,6))
+
+axes[0, 0].plot(xvalues, yvalues)
+
+axes[1, 0].plot(xvalues, yvalues)
+axes[1, 0].set_yscale('log')
+
+axes[0, 1].plot(xvalues, yvalues)
+axes[0, 1].set_xscale('log')
+
+axes[1, 1].plot(xvalues, yvalues)
+axes[1, 1].set_xscale('log')
+axes[1, 1].set_yscale('log')
+
+plt.show()
+
+# Scaling the axes
+fig, axes = plt.subplots(1,2, figsize=(8,5))
+
+axes[0].plot(xvalues, yvalues)
+
+axes[1].plot(xvalues, yvalues)
+axes[1].set_ylim([0,50])
+
+plt.show()
+
+#Text in graphs
+bowens = pd.read_csv("bowens.csv", sep = ",", na_values='.', header=0)
+print(bowens)
+               place  east  north
+0           Abingdon    50     97
+1       Admoor Copse    60     70
+2       AERE Harwell    48     87
+3      Agates Meadow    70     73
+4        Aldermaston    59     65
+..               ...   ...    ...
+728     Wytham Meads    47      9
+729      Wytham Wood    46      8
+730        Yattendon    54     74
+731  Yattendon Court    55     74
+732         Youlbury    48      3
+
+[733 rows x 3 columns]
+map_places = pd.read_csv("map.places.csv", sep = ",", na_values='.', header=0)
+print(map_places)
+           wanted
+0           Ascot
+1    AERE Harwell
+2         Reading
+3          Botley
+4     Wytham Wood
+..            ...
+107       Fernham
+108       Farmoor
+109  Wytham Meads
+110         Elcot
+111         Speen
+
+[112 rows x 1 columns]
+# print('Ascot' in map_places['wanted'].to_list())
+north = bowens.iloc[:,2]
+north_ = [x+100 if x<60 else x for x in north]
+east = bowens.iloc[:,1] 
+place = bowens.iloc[:,0]
+
+plt.rcParams.update({'font.size':12})
+plt.rcParams.update({'figure.figsize': (20, 15)})
+
+# ax.scatter(east, north_, alpha=0)
+
+for i, txt in enumerate(place):
+    if txt in map_places['wanted'].to_list():
+        plt.text(east[i], north_[i], txt)
+        
+plt.xlim(20,100)
+plt.ylim(60, 110)
+plt.show()
+
+#Character alignment
+plt.rcParams.update({'font.size': 25})
+plt.rcParams.update({'figure.figsize': (14, 8)})
+
+fig, axes = plt.subplots(1,2)
+
+for i, c in enumerate('abcdefghij'):   # i=index; c=number
+    axes[0].text(i, i, c) 
+    axes[1].text(i, 10-i, c, rotation='180')
+    
+    axes[0].set_xlim([0,10.5])
+    axes[0].set_ylim([0,10.5])
+    
+    axes[1].set_xlim([0,10.5])
+    axes[1].set_ylim([0,10.5])
+
+plt.show()
